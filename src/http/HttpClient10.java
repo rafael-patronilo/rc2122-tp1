@@ -14,14 +14,14 @@ import java.net.URL;
 //TODO HTTP 1.1 (OPCIONAL OBRIGATORIO)
 
 public class HttpClient10 implements HttpClient {
-	
-    private static final String PARTIAL_GET_FORMAT_STR = "GET %s HTTP/1.0\r\nRange: bytes=%d-%s\r\n\r\n";
+
     private static final String CONTENT_LENGTH = "Content-Length";
     private static final Object HTTP_200_OK = "200";
     private static final Object HTTP_206_OK = "206";
 
 	private static final String HTTP_SUCCESS = "20";
 	private static final String GET_FORMAT_STR = "GET %s HTTP/1.0\r\n%s\r\n\r\n";
+    private static final String RANGE_FORMAT_STR = "Range: bytes=%d-%s";
 
 	static private byte[] getContents(InputStream in) throws IOException {
 
@@ -61,8 +61,8 @@ public class HttpClient10 implements HttpClient {
             URL u = new URL(url);
             int port = u.getPort();
             try (Socket cs = new Socket(u.getHost(), port > 0 ? port : HTTP_DEFAULT_PORT)) {
-
-                cs.getOutputStream().write(String.format(PARTIAL_GET_FORMAT_STR, u.getPath(), start, "").getBytes());
+                String rangeString = String.format(RANGE_FORMAT_STR, start, "");
+                cs.getOutputStream().write(String.format(GET_FORMAT_STR, u.getPath(), rangeString).getBytes());
 
                 InputStream in = cs.getInputStream();
 
@@ -90,7 +90,7 @@ public class HttpClient10 implements HttpClient {
         }
         return null;
     }
-    
+
 
     @Override
     public byte[] doGetRange(String url, long start, long end) {
@@ -98,8 +98,8 @@ public class HttpClient10 implements HttpClient {
             URL u = new URL(url);
             int port = u.getPort();
             try (Socket cs = new Socket(u.getHost(), port > 0 ? port : HTTP_DEFAULT_PORT)) {
-
-                cs.getOutputStream().write(String.format(PARTIAL_GET_FORMAT_STR, u.getPath(), start, end).getBytes());
+                String rangeString = String.format(RANGE_FORMAT_STR, start, end);
+                cs.getOutputStream().write(String.format(GET_FORMAT_STR, u.getPath(), rangeString).getBytes());
 
                 InputStream in = cs.getInputStream();
 
@@ -126,5 +126,10 @@ public class HttpClient10 implements HttpClient {
             x.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void close() {
+        //Nothing to do on close
     }
 }

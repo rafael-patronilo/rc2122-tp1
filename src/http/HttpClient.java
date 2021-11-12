@@ -40,5 +40,9 @@ public interface HttpClient {
 	 * @return the contents range of the resource, or null if an error occurred
 	 */
 	public byte[] doGetRange(String url, long start, long end);
-	
+
+	/**
+	 * Closes an open connection
+	 */
+	public void close();
 }

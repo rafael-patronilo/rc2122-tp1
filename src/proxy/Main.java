@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 
 import http.HttpClient;
 import http.HttpClient10;
+import http.HttpClient11;
 import media.MovieManifest;
 import media.MovieManifest.*;
 import media.MovieManifest.SegmentContent;
@@ -11,7 +12,7 @@ import proxy.server.ProxyServer;
 
 public class Main {
 	static final String MEDIA_SERVER_BASE_URL = "http://localhost:9999";
-	private static final int SLACK = 200000;
+	private static final int SLACK = 300000;
 
 	public static void main(String[] args) throws Exception {
 
@@ -43,15 +44,11 @@ public class Main {
 			this.movie = movie;
 			this.queue = queue;
 			
-			this.http = new HttpClient10();
+			this.http = new HttpClient11();
 			
 			String rawManifest = new String(http.doGet(String.format(MANIFEST_REQUEST_FORMAT, movie)));
 			
 			this.manifest = MovieManifest.parse(rawManifest); //TODO F main manifest
-		}
-
-		private static long millisToSeconds(long millis){
-			return millis / 1000;
 		}
 
 		private static int avgBandwidth(long byteCount, long millisElapsed){
@@ -135,6 +132,7 @@ public class Main {
 				}
 			}
 			send(new SegmentContent(this.manifest.tracks().get(quality).contentType(), new byte[0]));
+			http.close();
 		}
 	}
 }
