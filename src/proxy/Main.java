@@ -35,8 +35,10 @@ public class Main {
 		private static final String MANIFEST_REQUEST_FORMAT = MEDIA_SERVER_BASE_URL + "/%s/manifest.txt";
 		final String movie;
 		final Manifest manifest;
-		private SegmentContent[] trackHeaders;
 		final BlockingQueue<SegmentContent> queue;
+
+		// The first segment of each track
+		private SegmentContent[] trackHeaders;
 
 		final HttpClient http;
 		
@@ -48,16 +50,29 @@ public class Main {
 			
 			String rawManifest = new String(http.doGet(String.format(MANIFEST_REQUEST_FORMAT, movie)));
 			
-			this.manifest = MovieManifest.parse(rawManifest); //TODO F main manifest
+			this.manifest = MovieManifest.parse(rawManifest);
+
+
 		}
 
+		/**
+		 * Calculates the average bandwidth in Kilobits per second
+		 *
+		 * @param byteCount The amount of data downloaded in bytes
+		 * @param millisElapsed The amount of millisencond elapsed during the download
+		 * @return the average bandwidth
+		 */
 		private static int avgBandwidth(long byteCount, long millisElapsed){
 			long bitCount = byteCount * 8;
 			double secondsElapsed = millisElapsed / 1000.0;
 			return (int)(bitCount / secondsElapsed);
 		}
 
-		void send(SegmentContent segment){
+		/**
+		 * Puts a segment in the queue, waiting for space if required
+		 * @param segment the segment to send
+		 */
+		private void send(SegmentContent segment){
 			try {
 				queue.put(segment);
 			} catch (InterruptedException e) {
@@ -65,14 +80,27 @@ public class Main {
 			}
 		}
 
-		byte[] downloadSegmentData(Track track, Segment segment){
+		/**
+		 * Submits an http request for a specific segment of a given track
+		 *
+		 * @param track The track to get the segement from
+		 * @param segment The segment to get
+		 * @return the downloaded data
+		 */
+		private byte[] downloadSegmentData(Track track, Segment segment){
 			String trackUrl = MEDIA_SERVER_BASE_URL + "/" + this.movie + "/" + track.filename();
 			long start = segment.offset();
 			long end = start + segment.length() - 1;
 			return http.doGetRange(trackUrl, start, end);
 		}
 
-		int pickBestQuality(int currentBandwidth){
+		/**
+		 * Selects the best quality for a given bandwidth
+		 *
+		 * @param currentBandwidth the current bandwidth for downloading segments
+		 * @return the index for the selected track
+		 */
+		private int pickBestQuality(int currentBandwidth){
 			for (int i = this.manifest.tracks().size() - 1; i >= 0; i--) {
 				Track track = this.manifest.tracks().get(i);
 				if(track.avgBandwidth() <= currentBandwidth - SLACK){
@@ -83,10 +111,11 @@ public class Main {
 		}
 
 		/**
-		 * TODO
-		 * @return
+		 * Downloads the first segment of each track, since these are required when switching
+		 * between tracks
+		 * @return the average bandwidth of the operation
 		 */
-		int downloadTrackHeaders(){
+		private int downloadTrackHeaders(){
 			int i = 0;
 			long totalTime = 0;
 			long totalData = 0;

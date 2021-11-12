@@ -8,7 +8,7 @@ import java.net.URL;
 
 /**
  * Implements a basic HTTP1.0 client
- * @author smduarte
+ * @author João Padrão 58288 e Rafael Patronilo 57473
  *
  */
 
@@ -23,6 +23,13 @@ public class HttpClient11 implements HttpClient {
 
     private Socket socket = null;
 
+    /**
+     * Gets or opens the socket
+     * @param host the host of the url
+     * @param port the port of the url
+     * @return the Socket
+     * @throws IOException if opening the socket results in an error
+     */
     private Socket getSocket(String host, int port) throws IOException {
         if(socket != null && !socket.isClosed()){
             return socket;
@@ -32,6 +39,13 @@ public class HttpClient11 implements HttpClient {
         return socket;
     }
 
+    /**
+     * Send a given HTTP Request and returns the contents
+     * @param url the url to send the request to
+     * @param request the request to send
+     * @param expectedStatus the expected status code on the reply
+     * @return the contents of the reply or null if there's an error
+     */
     private byte[] makeRequest(URL url, String request, String expectedStatus){
         System.out.println(request);
         int port = url.getPort();

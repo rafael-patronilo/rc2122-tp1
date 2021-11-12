@@ -52,7 +52,7 @@ class Player {
 	private static final String HTTP_CONTENT_TYPE_FMT = "Content-Type: %s\r\n";
 	private static final String HTTP_CONTENT_LENGTH_FMT = "Content-Length: %d\r\n";
 
-	private static final int MAX_SEGMENTS = 2;
+	private static final int MAX_SEGMENTS = 5;
 
 	private static final Object START_COMMAND = "start";
 	
