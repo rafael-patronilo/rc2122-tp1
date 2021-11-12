@@ -7,12 +7,11 @@ import java.net.Socket;
 import java.net.URL;
 
 /**
- * Implements a basic HTTP1.0 client
+ * Implements a basic HTTP1.1 client
  * @author João Padrão 58288 e Rafael Patronilo 57473
  *
  */
 
-//TODO HTTP 1.1 (OPCIONAL OBRIGATORIO)
 
 public class HttpClient11 implements HttpClient {
     private static final String CONTENT_LENGTH = "Content-Length";

@@ -140,9 +140,7 @@ public class Main {
 		 * be fed with a zero-length data segment
 		 */
 		public void run() {
-			// TODO main.run
 			int cTrackSegments = this.manifest.tracks().get(0).segments().size();
-			int cTracks = this.manifest.tracks().size();
 			int avgBandwidth = downloadTrackHeaders();
 			int quality = pickBestQuality(avgBandwidth);
 			send(this.trackHeaders[quality]);

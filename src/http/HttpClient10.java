@@ -11,7 +11,6 @@ import java.net.URL;
  *
  */
 
-//TODO HTTP 1.1 (OPCIONAL OBRIGATORIO)
 
 public class HttpClient10 implements HttpClient {
 
@@ -26,13 +25,13 @@ public class HttpClient10 implements HttpClient {
 	static private byte[] getContents(InputStream in) throws IOException {
 
 		String reply = Http.readLine(in);
-		System.out.println(reply);//TODO estava comentado
+		//System.out.println(reply);
 
 		if (!reply.contains(HTTP_SUCCESS)) {
 			throw new RuntimeException(String.format("HTTP request failed: [%s]", reply));
 		}
 		while ((reply = Http.readLine(in)).length() > 0) {
-			System.out.println(reply);//TODO estava comentado
+			//System.out.println(reply);
 		}
 		return in.readAllBytes();
 	}
