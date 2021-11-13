@@ -46,7 +46,7 @@ public class Main {
 			this.movie = movie;
 			this.queue = queue;
 			
-			this.http = new HttpClient11();
+			this.http = new HttpClient11(MEDIA_SERVER_BASE_URL);
 			
 			String rawManifest = new String(http.doGet(String.format(MANIFEST_REQUEST_FORMAT, movie)));
 			
