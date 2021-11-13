@@ -12,6 +12,9 @@ import proxy.server.ProxyServer;
 
 public class Main {
 	static final String MEDIA_SERVER_BASE_URL = "http://localhost:9999";
+
+	// How much better than the picked track bandwidth the current bandwidth must be.
+	// Avoids stalling the streaming
 	private static final int SLACK = 300000;
 
 	public static void main(String[] args) throws Exception {
